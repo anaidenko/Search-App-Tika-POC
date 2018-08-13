@@ -1,5 +1,6 @@
-## ES config ##
+## ES config
 
+```
 PUT tika-file
 {
    "settings": {
@@ -26,7 +27,9 @@ PUT tika-file
       }
    }
 }
+```
 
+```
 PUT tika-file/file/_mapping
 {
    "properties": {
@@ -121,14 +124,15 @@ PUT tika-file/file/_mapping
       }
    }
 }
+```
 
-
-## Query Samples ##
+## Query Samples
 
 These queries can be run via ES / Kibana UI / Dev Tools.
 
-### by documents ###
+### by documents
 
+```
 GET tika-file/_search
 {
   "query": {
@@ -152,9 +156,11 @@ GET tika-file/_search
     }
   }
 }
+```
 
-### by pages ###
+### by pages
 
+```
 GET tika-file/_search
 {
   "query": {
@@ -178,9 +184,11 @@ GET tika-file/_search
     }
   }
 }
+```
 
-### by paragraphs ###
+### by paragraphs
 
+```
 GET tika-file/_search
 {
   "query": {
@@ -204,9 +212,11 @@ GET tika-file/_search
     }
   }
 }
+```
 
-### by sentences ###
+### by sentences
 
+```
 GET tika-file/_search
 {
   "query": {
@@ -230,9 +240,11 @@ GET tika-file/_search
     }
   }
 }
+```
 
-### by tables ###
+### by tables
 
+```
 GET tika-file/_search
 {
   "query": {
@@ -256,3 +268,4 @@ GET tika-file/_search
     }
   }
 }
+```
