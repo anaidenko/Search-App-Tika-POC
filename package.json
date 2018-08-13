@@ -16,6 +16,7 @@
     "elasticsearch": "^15.1.1",
     "fs": "0.0.1-security",
     "fs-extra": "^7.0.0",
+    "office-to-pdf": "^4.0.0",
     "tabula-js": "^1.0.1",
     "tika": "^1.6.1",
     "typescript": "^3.0.1"
@@ -24,6 +25,7 @@
     "@types/cheerio": "^0.22.8",
     "@types/csv-stringify": "^1.4.2",
     "@types/elasticsearch": "^5.0.25",
+    "@types/fs-extra": "^5.0.4",
     "@types/highland": "^2.12.0",
     "@types/node": "^10.5.7",
     "prettier": "^1.14.2",

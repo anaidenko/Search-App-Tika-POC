@@ -1,39 +1,45 @@
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as cheerio from 'cheerio';
 import csvStringify from 'csv-stringify';
+import toPdf from 'office-to-pdf';
 const tika = require('tika');
 const tabula = require('./tabula-js/index');
 
 import { ExtractedData } from './types';
 import { ESClient } from './elasticsearch';
 
-// const FILEPATH = './docs/SMR Policy.pdf';
-// const FILEPATH = './docs/MIFID II.pdf';
-const FILEPATH = './docs/Twitter 10K Dec 2015.pdf';
-// const FILEPATH = './docs/ast_sci_data_tables_sample.pdf';
+// const FILEPATH = './samples/SMR Policy.pdf';
+// const FILEPATH = './samples/MIFID II.pdf';
+// const FILEPATH = './samples/Twitter 10K Dec 2015.pdf';
+// const FILEPATH = './samples/ast_sci_data_tables_sample.pdf';
+// const FILEPATH = './samples/pptexamples.ppt';
+const FILEPATH = './samples/13-Using_Powerpoint.ppt';
 
-run();
+run(FILEPATH);
 
 let pageCount = 0;
 let paragraphCount = 0;
 let sentenceCount = 0;
 let tableCount = 0;
 
-async function run() {
+async function run(filepath: string) {
   try {
-    if (!fs.existsSync(FILEPATH)) {
-      console.error(`File not found: ${FILEPATH}`);
+    if (!fs.existsSync(filepath)) {
+      console.error(`File not found: ${filepath}`);
       return;
     }
 
-    const content = await extractContent(FILEPATH);
-    const esItem = await indexContentBySegments(content, 'tika-file', FILEPATH);
+    const content = await extractContent(filepath);
+    const esItem = await indexContentBySegments(content, 'tika-file', filepath);
     console.log('ES index response', esItem);
 
-    if (content.meta['Content-Type'] === 'application/pdf') {
-      const tabulaResponse = await extractTablesFromPdf(FILEPATH);
+    const filepathPdf = await convertToPdf(filepath, content.meta);
+
+    if (filepathPdf !== null) {
+      const tabulaResponse = await extractTablesFromPdf(filepathPdf);
       const htmlTables = await Promise.all(tabulaResponse.map(table => tabulaDataToHtml(table.data)));
+      console.log(htmlTables.length, 'tables extracted by Tabula');
       // const csvTables = await Promise.all(tabulaResponse.map(table => tabulaDataToCsv(table.data)));
       // console.log("Extracted tables", csvTables);
       const response = await indexTables(esItem, htmlTables);
@@ -100,6 +106,10 @@ async function indexContentBySegments(content: ExtractedData, es_index: string, 
         id: ++tableCount,
         content: $.html(table)
       }));
+
+    if (tables.length > 0) {
+      console.log(tables.length, 'tables extracted by Tika');
+    }
 
     const document = {
       content: formatHtml(content.html),
@@ -187,9 +197,10 @@ async function extractTablesFromPdf(filepath: string) {
   });
 }
 
-async function indexTables(esItem: any, csvTables: string[]) {
+async function indexTables(esItem: any, tables: string[]) {
   return new Promise((resolve, reject) => {
-    if (csvTables.length === 0) return resolve();
+    if (tables.length === 0) return resolve();
+    tableCount = 0; // reset
 
     const client = new ESClient().client();
     client.update(
@@ -201,7 +212,7 @@ async function indexTables(esItem: any, csvTables: string[]) {
         body: {
           doc: {
             attachment: {
-              tables: csvTables.map(csv => ({
+              tables: tables.map(csv => ({
                 id: ++tableCount,
                 content: csv
               }))
@@ -220,11 +231,8 @@ async function indexTables(esItem: any, csvTables: string[]) {
 async function tabulaDataToHtml(result) {
   return new Promise((resolve: (csv: string) => void, reject) => {
     const data = result.map(row => row.map(cell => cell.text));
-
-    let rows = [];
-    rows = [...rows, data.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>')];
-    let table = '<table>\n' + rows.join('\n') + '</table>';
-
+    const rows = [...data.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join(' ') + '</tr>')];
+    const table = '<table>\n' + rows.join('\n') + '</table>';
     resolve(table);
   });
 }
@@ -243,4 +251,28 @@ async function tabulaDataToCsv(result) {
       }
     );
   });
+}
+
+async function convertToPdf(filepath, meta) {
+  if (meta['Content-Type'] === 'application/pdf') return filepath;
+
+  const filename = path.basename(filepath);
+  const extension = path.extname(filename);
+
+  // ppt => pdf supported yet
+  if (extension.match(/pptx?/i)) {
+    try {
+      const fileContent = await fs.readFile(filepath);
+      const pdfBuffer = await toPdf(fileContent);
+      const newFilepath = './tmp/' + filename + '.pdf';
+      await fs.ensureDir(path.resolve(path.dirname(newFilepath)));
+      await fs.writeFile(newFilepath, pdfBuffer);
+
+      return newFilepath;
+    } catch (err) {
+      console.error(`Unable to convert ${extension} => pdf`, err);
+    }
+  }
+
+  return null;
 }

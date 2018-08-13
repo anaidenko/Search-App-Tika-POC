@@ -1,3 +1,10 @@
+## Prerequisites
+
+1. ElasticSearch server
+2. Tika
+3. LibreOffice (soffice cli)
+4. JRE 6
+
 ## ES config
 
 ```
@@ -141,7 +148,7 @@ GET tika-file/_search
     }
   },
   "_source": {
-    "excludes": ["attachment.tables.*", "attachment.pages.*"]
+    "excludes": ["attachment.content", "attachment.tables", "attachment.pages"]
   },
   "highlight": {
     "tags_schema": "styled",
@@ -149,7 +156,7 @@ GET tika-file/_search
       "attachment.content": {
         "pre_tags": ["<em>"],
         "post_tags": ["</em>"],
-        "fragment_size": 1000000,
+        "fragment_size": 1000000000,
         "number_of_fragments": 50,
         "order": "score"
       }
@@ -169,7 +176,7 @@ GET tika-file/_search
     }
   },
   "_source": {
-    "excludes": ["attachment.tables.*", "attachment.pages.paragraphs.*"]
+    "excludes": ["attachment.content", "attachment.tables", "attachment.pages"]
   },
   "highlight": {
     "tags_schema": "styled",
@@ -177,7 +184,7 @@ GET tika-file/_search
       "attachment.pages.content": {
         "pre_tags": ["<em>"],
         "post_tags": ["</em>"],
-        "fragment_size": 1000000,
+        "fragment_size": 1000000000,
         "number_of_fragments": 50,
         "order": "score"
       }
@@ -197,7 +204,7 @@ GET tika-file/_search
     }
   },
   "_source": {
-    "excludes": ["attachment.tables.*", "attachment.content", "attachment.pages.content", "attachment.pages.paragraphs.sentences.*"]
+    "excludes": ["attachment.content", "attachment.tables", "attachment.pages"]
   },
   "highlight": {
     "tags_schema": "styled",
@@ -205,7 +212,7 @@ GET tika-file/_search
       "attachment.pages.paragraphs.content": {
         "pre_tags": ["<em>"],
         "post_tags": ["</em>"],
-        "fragment_size": 1000000,
+        "fragment_size": 1000000000,
         "number_of_fragments": 50,
         "order": "score"
       }
@@ -225,7 +232,7 @@ GET tika-file/_search
     }
   },
   "_source": {
-    "excludes": ["attachment.tables.*", "attachment.content", "attachment.pages.content", "attachment.pages.paragraphs.content"]
+    "excludes": ["attachment.content", "attachment.tables", "attachment.pages"]
   },
   "highlight": {
     "tags_schema": "styled",
@@ -233,7 +240,7 @@ GET tika-file/_search
       "attachment.pages.paragraphs.sentences.content": {
         "pre_tags": ["<em>"],
         "post_tags": ["</em>"],
-        "fragment_size": 1000000,
+        "fragment_size": 1000000000,
         "number_of_fragments": 50,
         "order": "score"
       }
@@ -253,7 +260,7 @@ GET tika-file/_search
     }
   },
   "_source": {
-    "excludes": ["attachment.content", "attachment.pages.*"]
+    "excludes": ["attachment.content", "attachment.tables", "attachment.pages"]
   },
   "highlight": {
     "tags_schema": "styled",
@@ -261,7 +268,7 @@ GET tika-file/_search
       "attachment.tables.content": {
         "pre_tags": ["<em>"],
         "post_tags": ["</em>"],
-        "fragment_size": 1000000,
+        "fragment_size": 1000000000,
         "number_of_fragments": 50,
         "order": "score"
       }
