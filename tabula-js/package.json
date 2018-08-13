@@ -1,0 +1,59 @@
+{
+  "_from": "tabula-js",
+  "_id": "tabula-js@1.0.1",
+  "_inBundle": false,
+  "_integrity": "sha1-rug+gozdicryXf6Mf46Vpw//bPs=",
+  "_location": "/tabula-js",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "tabula-js",
+    "name": "tabula-js",
+    "escapedName": "tabula-js",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/tabula-js/-/tabula-js-1.0.1.tgz",
+  "_shasum": "aee83e828cdd89caf25dfe8c7f8e95a70fff6cfb",
+  "_spec": "tabula-js",
+  "_where": "/Users/anaidenko/Work/simon/Search-App-Tika-POC",
+  "author": {
+    "name": "Ezo Saleh",
+    "email": "npm@ezosaleh.com",
+    "url": "http://ezosaleh.com/"
+  },
+  "bugs": {
+    "url": "https://github.com/ezodude/tabula-js/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "highland": "^2.8.1",
+    "highland-process": "^1.0.5",
+    "lodash": "^4.13.1"
+  },
+  "deprecated": false,
+  "description": "Extract CSV data tables from PDF files. It's a node wrapper for the mighty tabula-java 0.9.0.",
+  "homepage": "https://github.com/ezodude/tabula-js#readme",
+  "keywords": [
+    "pdf",
+    "csv",
+    "pdf to csv"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "tabula-js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezodude/tabula-js.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.1"
+}
